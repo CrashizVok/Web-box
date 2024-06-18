@@ -2,9 +2,7 @@ import requests
 import webbrowser
 import os
 import time
-import subprocess
 import threading
-import requests
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 clear_screen()    
