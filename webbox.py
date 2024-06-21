@@ -3,6 +3,7 @@ import webbrowser
 import os
 import time
 import threading
+import nmap
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 clear_screen()    
@@ -13,9 +14,12 @@ def ico():
  | |/ |/ / -_) _ \  / _ \/ _ \\ \ /
  |__/|__/\__/_.__/ /_.__/\___/_\_\ 
 
- [01] Certificate Search
- [02] Website Discovery
- [03] Exit                          
+ [01] Certificate Search        [05] Nmap custom
+ [02] Website Discovery         [06] Nikto Web Server Scan
+ [03] Website Scan              [07] WPScan for WordPress
+ [04] PC Scan                   [08] Subdomain Enumeration
+
+ [99] Exit                          
 """
     print(x)
 def ico2():
@@ -54,7 +58,7 @@ def A2():
     url = input("Enter URL (e.g., https://kkando.hu/): ")
 
     if url.startswith("https://") or url.startswith("http://"):
-        with open("dircommon.txt", "r", encoding="utf-8") as file:
+        with open("common.txt", "r", encoding="utf-8") as file:
             threads = []
             for line in file:
                 directory = line.strip()
@@ -72,6 +76,77 @@ def A2():
         print(f"[+] {succ} [200 OK]")
     print(f"[+] {len(succes_urls)} URLs found.")
     input("Press Enter to continue...")
+def A3():
+    url = input("Enter IP address or domain: ")
+    try:
+        nm = nmap.PortScanner()
+        nm.scan(url, '1-65535', '-Pn -A -T0 -sV -sS -sC -O --script=http-title,http-headers,vuln')
+        if nm.all_hosts():
+            for host in nm.all_hosts():
+                print(f'Host: {host} ({nm[host].hostname()})')
+                print(f'State: {nm[host].state()}')
+                for proto in nm[host].all_protocols():
+                    print('----------')
+                    print(f'Protocol: {proto}')
+                    
+                    lport = nm[host][proto].keys()
+                    for port in lport:
+                        print(f'port: {port}\tstate: {nm[host][proto][port]["state"]}')
+                        print(f'service: {nm[host][proto][port]["name"]}')
+                        if 'script' in nm[host][proto][port]:
+                            print(f'script: {nm[host][proto][port]["script"]}')
+        else:
+            print(f"No hosts found for {url}")
+
+    except nmap.PortScannerError as e:
+        print(f"[-] {url} [Error: {e}]")
+        time.sleep(4)
+        A3()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
+    input("Press Enter to continue...")
+
+def A4():
+    url = input("Enter IP address: ")
+    try:
+        nm = nmap.PortScanner()
+        nm.scan(url, '1-65535', '-Pn -A -T0 -sV -sS -sC -O --script=default,vuln')
+        if nm.all_hosts():
+            for host in nm.all_hosts():
+                print(f'Host: {host} ({nm[host].hostname()})')
+                print(f'State: {nm[host].state()}')
+                for proto in nm[host].all_protocols():
+                    print('----------')
+                    print(f'Protocol: {proto}')
+                    
+                    lport = nm[host][proto].keys()
+                    for port in lport:
+                        print(f'port: {port}\tstate: {nm[host][proto][port]["state"]}')
+                        print(f'service: {nm[host][proto][port]["name"]}')
+                        if 'script' in nm[host][proto][port]:
+                            print(f'script: {nm[host][proto][port]["script"]}')
+        else:
+            print(f"No hosts found for {url}")
+
+    except nmap.PortScannerError as e:
+        print(f"[-] {url} [Error: {e}]")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    
+    input("Press Enter to continue...")
+def A5():
+    print("Coming soon.....")
+    input("Press Enter to continue...")
+def A6():
+    print("Coming soon.....")
+    input("Press Enter to continue...")
+def A7():
+    print("Coming soon.....")
+    input("Press Enter to continue...")
+def A8():
+    print("Coming soon.....")
+    input("Press Enter to continue...")
 
 if __name__ == "__main__":
     def main_run():
@@ -87,6 +162,30 @@ if __name__ == "__main__":
                 clear_screen() 
                 main_run()
             elif ch == 3:
+                A3()
+                clear_screen() 
+                main_run()
+            elif ch == 4:
+                A4()
+                clear_screen() 
+                main_run()
+            elif ch == 5:
+                A5()
+                clear_screen() 
+                main_run()
+            elif ch == 6:
+                A6()
+                clear_screen() 
+                main_run()
+            elif ch == 7:
+                A7()
+                clear_screen() 
+                main_run()
+            elif ch == 8:
+                A8()
+                clear_screen() 
+                main_run()
+            elif ch == 99:
                 print("bye.....")
                 time.sleep(2)
                 os._exit
