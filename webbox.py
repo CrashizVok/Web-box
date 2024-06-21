@@ -1,3 +1,4 @@
+
 import requests
 import webbrowser
 import os
@@ -13,7 +14,7 @@ def ico():
  | | /| / /__ / /    / /  ___ __ __
  | |/ |/ / -_) _ \  / _ \/ _ \\ \ /
  |__/|__/\__/_.__/ /_.__/\___/_\_\ 
-
+                        Created By: Crashi_z
  [01] Certificate Search        [05] Nmap custom
  [02] Website Discovery         [06] Nikto Web Server Scan
  [03] Website Scan              [07] WPScan for WordPress
@@ -28,6 +29,7 @@ def ico2():
  | | /| / /__ / /    / /  ___ __ __
  | |/ |/ / -_) _ \  / _ \/ _ \\ \ /
  |__/|__/\__/_.__/ /_.__/\___/_\_\ 
+                        Created By: Crashi_z
 
                        
 """
