@@ -6,7 +6,7 @@ import threading
 import nmap
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
-clear_screen()    
+clear_screen() 
 def ico():
     x = """
   _      __    __     __           
@@ -15,9 +15,9 @@ def ico():
  |__/|__/\__/_.__/ /_.__/\___/_\_\ 
                         Created By: Crashi_z
  [01] Certificate Search        [05] Nmap custom
- [02] Website Discovery         [06] Nikto Web Server Scan
- [03] Website Scan              [07] WPScan for WordPress
- [04] PC Scan                   [08] Subdomain Enumeration
+ [02] Website Discovery         [06] Nikto Web Server Scan (Only Linux)
+ [03] Website Scan              [07] WPScan for WordPress (Only Linux)
+ [04] PC Scan                   [08] Google Dorking
 
  [99] Exit                          
 """
@@ -33,7 +33,16 @@ def ico2():
                        
 """
     print(x)
-
+def install_chek():
+    if os.name == 'nt':
+        pass
+    else:
+        print("[+] Installing...")
+        os.system("sudo apt-get install nikto")
+        os.system("sudo apt-get install wpscan")
+        os.system("sudo apt-get install nmap") 
+        clear_screen()   
+install_chek()   
 def A1():
     url = input("Enter URL (e.g., www.kkando.hu): ")
     if url.startswith('www.'):
@@ -81,7 +90,7 @@ def A3():
     url = input("Enter IP address or domain: ")
     try:
         nm = nmap.PortScanner()
-        nm.scan(url, '1-65535', '-Pn -A -T0 -sV -sS -sC -O --script=http-title,http-headers,vuln')
+        nm.scan(url, '1-65535', '-Pn -A -v -T4 -sV -sS -sC -O --script=http-title,http-headers,vuln')
         if nm.all_hosts():
             for host in nm.all_hosts():
                 print(f'Host: {host} ({nm[host].hostname()})')
@@ -112,7 +121,7 @@ def A4():
     url = input("Enter IP address: ")
     try:
         nm = nmap.PortScanner()
-        nm.scan(url, '1-65535', '-Pn -A -T0 -sV -sS -sC -O --script=default,vuln')
+        nm.scan(url, '1-65535', '-Pn -A -v -T4 -sV -sS -sC -O --script=default,vuln')
         if nm.all_hosts():
             for host in nm.all_hosts():
                 print(f'Host: {host} ({nm[host].hostname()})')
@@ -137,16 +146,103 @@ def A4():
     
     input("Press Enter to continue...")
 def A5():
-    print("Coming soon.....")
+    url = input("Enter IP address or domain: ")
+    port = input("Enter ports (default: 1-65535): ")
+    command = input("Nmap command: ")
+    
+    if port == "":
+        port = "1-65535" 
+    
+    try:
+        nm = nmap.PortScanner()
+        nm.scan(url, port, arguments=command)
+        
+        if nm.all_hosts():
+            for host in nm.all_hosts():
+                print(f'Host: {host} ({nm[host].hostname()})')
+                print(f'State: {nm[host].state()}')
+                
+                for proto in nm[host].all_protocols():
+                    print('----------')
+                    print(f'Protocol: {proto}')
+                    
+                    lport = nm[host][proto].keys()
+                    sorted_ports = sorted(lport, key=lambda x: int(x))
+                    
+                    for port in sorted_ports:
+                        port_info = nm[host][proto][port]
+                        service_name = name_service(port_info)
+                        print(f'port: {port}\tstate: {port_info["state"]}\t{service_name}')
+                        
+                        if 'product' in port_info or 'version' in port_info:
+                            print(f'\tProduct: {port_info["product"]}')
+                            print(f'\tVersion: {port_info["version"]}')
+                        
+                        if 'extrainfo' in port_info:
+                            print(f'\tAdditional Info: {port_info["extrainfo"]}')
+                        
+                        if 'script' in port_info:
+                            for script in port_info['script']:
+                                print(f'\t{script}: {port_info["script"][script]}')
+        
+        else:
+            print(f"No hosts found for {url}")
+
+    except nmap.PortScannerError as e:
+        print(f"[-] {url} [Error: {e}]")
+    
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
     input("Press Enter to continue...")
+
+def name_service(port_info):
+    if 'name' in port_info:
+        return f'service: {port_info["name"]}'
+    elif port_info["state"] == "filtered":
+        return f'state: filtered service: {port_info["reason"]}'
+    else:
+        return f'service: unknown'
 def A6():
-    print("Coming soon.....")
+    if os.name == 'nt':
+        print("No no.....")   
+    else:
+        clear_screen()
+        ico2()
+        print(" [01] NormalScan")
+        print(" [02] HTTPSScan ")
+        print(" [03] PortScan  ")
+        print(" [04] Tuning    ")
+        x = input(f"{os.getlogin()}~# ")
+        if x == 1:
+            url = input("Enter website url: ")
+            os.system(f"nikto -h {url}")
+        elif x == 2:
+            url = input("Enter website url: ")
+            port = input("Enter port: ")
+            os.system(f"nikto -h {url} -ssl")
+        elif x == 3:
+            url = input("Enter website url: ")
+            port = input("Enter port: ")
+            os.system(f"nikto -h {url} -p {port}")
+        elif x == 4:
+            url = input("Enter website url: ")
+            os.system(f"nikto -h {url} -Tuning 1234567890")
+        else:
+            print("Invalid option")
     input("Press Enter to continue...")
 def A7():
-    print("Coming soon.....")
+    if os.name == 'nt':
+        print("No no.....")
     input("Press Enter to continue...")
 def A8():
-    print("Coming soon.....")
+    url = input("Enter URL (e.g., www.kkando.hu): ")
+    if url.startswith('www.'):
+        new_str = url[3:]
+    else:
+        new_str = url
+        url = 'www.'+url
+    webbrowser.open(f"https://www.google.com/search?q=-site:{url} site:*{new_str}")
     input("Press Enter to continue...")
 
 if __name__ == "__main__":
