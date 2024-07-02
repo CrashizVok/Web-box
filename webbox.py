@@ -4,6 +4,7 @@ import os
 import time
 import threading
 import nmap
+import cve_searchsploit
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 clear_screen() 
@@ -14,8 +15,8 @@ def ico():
  | |/ |/ / -_) _ \  / _ \/ _ \\ \ /
  |__/|__/\__/_.__/ /_.__/\___/_\_\ 
                         Created By: Crashi_z
- [01] Certificate Search        [05] Nmap custom
- [02] Website Discovery         [06] Nikto Web Server Scan (Only Linux)
+ [01] Certificate Search        [05] Nmap custom                             [09] Vulnerability & Exploit Database
+ [02] Website Discovery         [06] Nikto Web Server Scan (Only Linux)      [10] CVE Search
  [03] Website Scan              [07] WPScan for WordPress (Only Linux)
  [04] PC Scan                   [08] Google Dorking
 
@@ -244,7 +245,35 @@ def A8():
         url = 'www.'+url
     webbrowser.open(f"https://www.google.com/search?q=-site:{url} site:*{new_str}")
     input("Press Enter to continue...")
-
+def A9():
+    try:
+        target = input(">>> ")
+        print("[1] Type  [2] Module  [3] vulnerability")
+        type = int(input(">>> "))
+        if type == 1:
+            webbrowser.open(f"https://www.rapid7.com/db/?q={target}&type=")
+        elif type == 2:
+            webbrowser.open(f"https://www.rapid7.com/db/?q={target}&type=metasploit")
+        elif type == 3:
+            webbrowser.open(f"https://www.rapid7.com/db/?q={target}&type=nexpose")
+        else:
+            print("Invalid option")
+    except:
+        print("An error occurred")
+    input("Press Enter to continue...")
+def A10():
+    cve_sploit = cve_searchsploit.CVESploit()
+    cve_id = input("Enter CVE number (e.g., CVE-2021-3156): ")
+    result = cve_sploit.search(cve_id)
+    try:
+        for exploit in result:
+            print(f"Title: {exploit['title']}")
+            print(f"Description: {exploit['description']}")
+            print(f"Exploit DB URL: {exploit['exploit_db_url']}")
+            print('-----')
+    except:
+        print(f"No exploits found for {cve_id}")
+    input("Press Enter to continue...")
 if __name__ == "__main__":
     def main_run():
         ico()
@@ -280,6 +309,14 @@ if __name__ == "__main__":
                 main_run()
             elif ch == 8:
                 A8()
+                clear_screen() 
+                main_run()
+            elif ch == 9:
+                A9()
+                clear_screen() 
+                main_run() 
+            elif ch == 10:
+                A10()
                 clear_screen() 
                 main_run()
             elif ch == 99:
