@@ -3,4 +3,5 @@ webbrowser
 os
 time
 threading
-python-nmap
+nmap
+cve_searchsploit
